@@ -1,19 +1,44 @@
-SRC := $(shell find . -name "*.c" -not -path "./build/*")
-OBJ := $(SRC:.c=.o)
-TARGET := main_run
+# 编译器设置
+CC = gcc
+CFLAGS = -Wall -g
+LDFLAGS = -pthread
 
-CC := gcc
-CFLAGS := -I. -I./include -Wall -g
-LDFLAGS := -lpthread 
-.PHONY: all clean
+# 目录结构
+SRC_DIR = .
+BUILD_DIR = build
+OBJ_DIR = $(BUILD_DIR)/o
+BIN_DIR = $(BUILD_DIR)/application
 
-all: $(TARGET)
+# 目标可执行文件
+TARGET = $(BIN_DIR)/main_run
 
-$(TARGET): $(OBJ)
-	$(CC) -o $@ $^ $(LDFLAGS)
+SOURCES = $(wildcard $(SRC_DIR)/*.c)
 
-%.o: %.c
+OBJECTS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SOURCES))
+
+.PHONY: all clean dirs
+
+all: dirs $(TARGET)
+
+
+dirs:
+	@mkdir -p $(OBJ_DIR) $(BIN_DIR)
+
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+	@echo "link completed: $@"
+
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | dirs
 	$(CC) $(CFLAGS) -c $< -o $@
+	@echo "compilation completed: $@"
 
+# 清理
 clean:
-	rm -f $(TARGET) $(OBJ)
+	rm -rf $(BUILD_DIR)
+
+print:
+	@echo "SOURCES: $(SOURCES)"
+	@echo "OBJECTS: $(OBJECTS)"
+	@echo "TARGET: $(TARGET)"
