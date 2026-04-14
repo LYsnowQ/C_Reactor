@@ -1,5 +1,6 @@
 #include "Dispatcher.h"
 #include "Channel.h"
+#include "EventLoop.h"
 #include <sys/epoll.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -125,12 +126,12 @@ static int epollDispatcher(struct EventLoop* evLoop,int timeout)//timeout:second
         
         if(events & EPOLLIN)
         {
-            
+            eventActivate(evLoop, fd, ReadEvent);            
         }
         
         if(events & EPOLLOUT)
         {
-        
+            eventActivate(evLoop, fd, WriteEvent);
         }
 
     }

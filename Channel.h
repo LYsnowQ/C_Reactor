@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-typedef int(*handleFunc)(void* arg);
+typedef void (*handleFunc)(void* arg);
 
 struct Channel
 {
