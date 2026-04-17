@@ -17,8 +17,8 @@ struct TcpServer
 };
 
 
-struct TcpServer* tcpServerInit(int port,int threadNum);
-
 struct Listener* listenerInit(unsigned short port);
+
+struct TcpServer* tcpServerInit(int port,int threadNum);
 
 void tcpServerRun(struct TcpServer* server);

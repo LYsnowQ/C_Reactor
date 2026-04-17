@@ -1,1 +1,72 @@
-[]
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-g",
+      "-c",
+      "-o",
+      "build/o/Channel.o",
+      "Channel.c"
+    ],
+    "directory": "/project/Reactor",
+    "file": "/project/Reactor/Channel.c",
+    "output": "/project/Reactor/build/o/Channel.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-g",
+      "-c",
+      "-o",
+      "build/o/ChannelMap.o",
+      "ChannelMap.c"
+    ],
+    "directory": "/project/Reactor",
+    "file": "/project/Reactor/ChannelMap.c",
+    "output": "/project/Reactor/build/o/ChannelMap.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-g",
+      "-c",
+      "-o",
+      "build/o/EventLoop.o",
+      "EventLoop.c"
+    ],
+    "directory": "/project/Reactor",
+    "file": "/project/Reactor/EventLoop.c",
+    "output": "/project/Reactor/build/o/EventLoop.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-g",
+      "-c",
+      "-o",
+      "build/o/ThreadPool.o",
+      "ThreadPool.c"
+    ],
+    "directory": "/project/Reactor",
+    "file": "/project/Reactor/ThreadPool.c",
+    "output": "/project/Reactor/build/o/ThreadPool.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-g",
+      "-c",
+      "-o",
+      "build/o/main.o",
+      "main.c"
+    ],
+    "directory": "/project/Reactor",
+    "file": "/project/Reactor/main.c",
+    "output": "/project/Reactor/build/o/main.o"
+  }
+]

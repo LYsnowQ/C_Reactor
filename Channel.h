@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-typedef void (*handleFunc)(void* arg);
+typedef int (*handleFunc)(void* arg);
 
 struct Channel
 {
@@ -11,6 +11,7 @@ struct Channel
 
     handleFunc readCallback;
     handleFunc writeCallback;
+    handleFunc destoryCallback;
     void* arg;
 };
 
@@ -23,7 +24,7 @@ enum FDEvent
 
 
 //init a Channel
-struct Channel* channelInit(int fd,int events,handleFunc readFunc ,handleFunc writeFunc,void* arg);
+struct Channel* channelInit(int fd,int events,handleFunc readFunc ,handleFunc writeFunc,handleFunc destoryFunc, void* arg);
 
 void writeEventEnable(struct Channel* channel,bool flag);
 

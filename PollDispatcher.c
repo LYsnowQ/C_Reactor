@@ -97,7 +97,7 @@ static int pollRemove(struct Channel* channel,struct EventLoop* evLoop)
             break;
         }
     }
-    
+    channel->destoryCallback(channel->arg); 
     if(i >= MAX)
     {
         return -1;

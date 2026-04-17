@@ -2,6 +2,8 @@
 #include "Channel.h"
 #include "EventLoop.h"
 
+
+struct EventLoop;
 struct Dispatcher
 {
     //init select/pool/epoll's datablock

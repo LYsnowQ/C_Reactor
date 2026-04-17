@@ -1,34 +1,30 @@
-#include <stdlib.h>
-#include <pthread.h>
-#include <unistd.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+#include "Log.h"
+#include "TcpServer.h"
 
 
-#include "c_threadpool.h"
-#include "server.h"
 
-
-int main (int argc,char* argv[]){
-
-#if 1    
-    
+int main(int argc ,const char** argv)
+{
     if(argc < 3)
     {
-        printf("./a.out port path\n");
+        printf("app port path");
         return -1;
     }
-
     unsigned short port = atoi(argv[1]);
-
-    //切换服务器的工作路径
+    
     chdir(argv[2]);
-
-    //初始化套接字
-    int lfd = initListenFd(port);
-   
-    //启动服务程序
-    epollRun(lfd);    
-#endif 
+    LOG_DEBUG("资源定向成功，开始启动服务器...");
+    struct TcpServer* server = tcpServerInit(port, 4);
+    if(server == NULL)
+    {
+        fprintf(stderr, "服务器初始化失败，请检查端口占用和启动参数。\n");
+        return -1;
+    }
+    tcpServerRun(server);
 
     return 0;
 }

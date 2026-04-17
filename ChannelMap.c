@@ -9,6 +9,7 @@ struct ChannelMap*  channelMapInit(int size)
     struct ChannelMap* map = (struct ChannelMap*)malloc(sizeof(struct ChannelMap));
     map->size = size;
     map->list = (struct Channel**)malloc(sizeof(struct Channel*) * size);
+    memset(map->list, 0, sizeof(struct Channel*) * size);
     return map;
 }
 
@@ -45,5 +46,5 @@ bool makeMapRoom(struct ChannelMap *map, int newSize, int unitSize)
     map->list = temp;
     memset(&map->list[map->size],0,(curSize - map->size) * unitSize);
     map->size = curSize;
-    return false;
+    return true;
 }

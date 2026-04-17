@@ -22,17 +22,20 @@ void taskWakeup(struct EventLoop* evLoop)
 }
 
 //Read data
-void readLocalMessage(void* arg)
+int readLocalMessage(void* arg)
 {
     struct EventLoop* evLoop = (struct EventLoop*)arg;
     char buf[256];
     read(evLoop->socketPair[1],buf,sizeof(buf));
+    return 0;
 }
 
 struct EventLoop* eventLoopInitEx(const char* threadName)
 {
     struct EventLoop* evLoop = (struct EventLoop*)malloc(sizeof(struct EventLoop));
     evLoop->isQuit = false;
+    evLoop->head = NULL;
+    evLoop->tail = NULL;
     
     evLoop->threadID = pthread_self();
     
@@ -45,6 +48,7 @@ struct EventLoop* eventLoopInitEx(const char* threadName)
 
     evLoop->channelMap = channelMapInit(128);
     
+    //规则：evLoop->socketPair[0]发送数据 evLoop->socketPair[1]接收数据    
     int ret = socketpair(AF_UNIX,SOCK_STREAM,0,evLoop->socketPair);
     if(ret == -1)
     {
@@ -52,7 +56,7 @@ struct EventLoop* eventLoopInitEx(const char* threadName)
         exit(0);
     }
 
-    struct Channel* channel = channelInit(evLoop->socketPair[1],ReadEvent,readLocalMessage,NULL,evLoop);
+    struct Channel* channel = channelInit(evLoop->socketPair[1],ReadEvent,readLocalMessage,NULL,NULL,evLoop);
     eventLoopAddTask(evLoop, channel, ADD);
 
      
@@ -156,15 +160,15 @@ int eventLoopProcessTask(struct EventLoop *evLoop)
         struct Channel* channel = head->channel;
         if(head->type == ADD)
         {
-            eventLoopAdd(evLoop, channel, ADD);             
+            eventLoopAdd(evLoop, channel);             
         }
         else if(head->type == DELETE)
         {
-            eventLoopRemove(evLoop, channel, DELETE); 
+            eventLoopRemove(evLoop, channel); 
         }
         else if(head->type == MODIFY)
         {
-            eventLoopModify(evLoop, channel, DELETE);
+            eventLoopModify(evLoop, channel);
         }
         
         struct ChannelElement* temp = head;
@@ -176,7 +180,7 @@ int eventLoopProcessTask(struct EventLoop *evLoop)
     return 0;
 }
 
-int eventLoopAdd(struct EventLoop* evLoop,struct Channel* channel,int type)
+int eventLoopAdd(struct EventLoop* evLoop,struct Channel* channel)
 {
     int fd = channel -> fd;
     struct ChannelMap* channelMap = evLoop->channelMap;
@@ -199,7 +203,7 @@ int eventLoopAdd(struct EventLoop* evLoop,struct Channel* channel,int type)
 }
 
 
-int eventLoopRemove(struct EventLoop* evLoop,struct Channel* channel,int type)
+int eventLoopRemove(struct EventLoop* evLoop,struct Channel* channel)
 {
     int fd = channel-> fd;
     struct ChannelMap* channelMap = evLoop->channelMap;
@@ -209,11 +213,12 @@ int eventLoopRemove(struct EventLoop* evLoop,struct Channel* channel,int type)
     }
 
     int ret = evLoop->dispatcher->remove(channel,evLoop);
+
     return ret;
 }
 
 
-int eventLoopModify(struct EventLoop* evLoop,struct Channel* channel,int type)
+int eventLoopModify(struct EventLoop* evLoop,struct Channel* channel)
 {
     int fd = channel-> fd;
     struct ChannelMap* channelMap = evLoop->channelMap;

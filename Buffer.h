@@ -25,3 +25,5 @@ int bufferAppendString(struct Buffer* buffer,const char* data);
 int bufferSocketRead(struct Buffer* buffer,int fd);
 
 int bufferSocketWrite(struct Buffer* buffer,int fd);
+
+int bufferSendData(struct Buffer* buffer, int socket);

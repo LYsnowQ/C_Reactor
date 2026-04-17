@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/uio.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
 
 struct Buffer* bufferInit(int size)
 {
@@ -24,8 +27,9 @@ void bufferDestory(struct Buffer* buf)
     {
         if(buf->data != NULL)
         {
-            free(buf);
+            free(buf->data);
         }
+        free(buf);
     }
 }
 
@@ -63,7 +67,7 @@ void bufferExtendRoom(struct Buffer* buffer,int size)
 
 int bufferWriteableSize(struct Buffer* buffer)
 {
-    return buffer->capacity - buffer->readPos;
+    return buffer->capacity - buffer->writePos;
 }
 
 
@@ -75,7 +79,7 @@ int bufferReadableSize(struct Buffer* buffer)
 
 int bufferAppendData(struct Buffer* buffer,const char* data,int size)
 {
-    if(buffer == NULL || data == NULL || data<= 0)
+    if(buffer == NULL || data == NULL || size <= 0)
     {
         return -1;
     }
@@ -125,7 +129,24 @@ int bufferSocketRead(struct Buffer* buffer,int fd)
         bufferAppendData(buffer,tempbuf,result-writeable);    
     }
     free(tempbuf);
-    return 0;
+    return result;
 }
 
-int bufferSocketWrite(struct Buffer* buffer,int fd);
+int bufferSendData(struct Buffer* buffer, int socket)
+{
+    int readable = bufferReadableSize(buffer);
+    if(readable > 0)
+    {
+        int count = send(socket ,buffer->data + buffer->readPos,readable,0);
+        if(count > 0)
+        {
+            buffer->readPos += count;
+            usleep(1);
+        }
+        return count;
+    }
+
+
+
+    return 0;
+}

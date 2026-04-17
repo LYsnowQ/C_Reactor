@@ -2,14 +2,16 @@
 #include <stdlib.h>
 
 
-struct Channel* channelInit(int fd,int events,handleFunc readFunc,handleFunc writeFunc,void* arg)
+struct Channel* channelInit(int fd,int events,handleFunc readFunc,
+        handleFunc writeFunc,handleFunc destoryFunc,void* arg)
 {
     struct Channel* channel = (struct Channel*)malloc(sizeof(struct Channel));
     channel ->arg = arg;
     channel ->fd = fd;
     channel ->events = events;
     channel ->readCallback = readFunc;
-    channel ->writeCallback = readFunc;
+    channel ->writeCallback = writeFunc;
+    channel ->destoryCallback = destoryFunc;
     return channel;
 }
 

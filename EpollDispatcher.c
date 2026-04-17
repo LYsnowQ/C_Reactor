@@ -91,6 +91,7 @@ static int epollRemove(struct Channel* channel,struct EventLoop* evLoop)
         perror("epoll_ctl_delete");
         exit(0);
     }
+    channel->destoryCallback(channel->arg);
     return ret;
 }
 

@@ -12,6 +12,7 @@ extern struct Dispatcher EpollDispatcher;
 extern struct Dispatcher PollDispatcher;
 extern struct Dispatcher SelectDispatcher;
 
+
 enum ChannelType
 {
     ADD,
@@ -19,7 +20,7 @@ enum ChannelType
     MODIFY
 };
 
-
+struct Dispatcher;
 struct ChannelElement{
     
     int type;
@@ -59,10 +60,10 @@ int eventLoopAddTask(struct EventLoop* evLoop,struct Channel* channel,int type);
 int eventLoopProcessTask(struct EventLoop* evLoop);
 
 
-int eventLoopAdd(struct EventLoop* evLoop,struct Channel* channel,int type);
+int eventLoopAdd(struct EventLoop* evLoop,struct Channel* channel);
 
-int eventLoopRemove(struct EventLoop* evLoop,struct Channel* channel,int type);
+int eventLoopRemove(struct EventLoop* evLoop,struct Channel* channel);
 
-int eventLoopModify(struct EventLoop* evLoop,struct Channel* channel,int type);
+int eventLoopModify(struct EventLoop* evLoop,struct Channel* channel);
 
 int destoryChannel(struct EventLoop* evLoop,struct Channel* channel);
