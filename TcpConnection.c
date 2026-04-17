@@ -40,7 +40,7 @@ int processRead(void* arg)
 
     if(count > 0)
     {
-        //接收http请求，解析http请求
+        //接收 HTTP 请求，解析 HTTP 请求
         int socket = conn->channel->fd;
 #ifdef MSG_SEND_AUTO                
         writeEventEnable(conn->channel,true);
@@ -68,7 +68,7 @@ struct TcpConnection* tcpConnectionInit(int fd,struct EventLoop* evLoop)
     conn->readBuffer = bufferInit(10240);
     conn->writeBuffer = bufferInit(10240);
     
-    // http
+    // HTTP 协议对象
     conn->request = httpRequestInit();
     conn->response = httpResponseInit();
     sprintf(conn->name,"Connection-%d",fd);

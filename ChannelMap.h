@@ -5,7 +5,7 @@
 struct ChannelMap
 {
     int size;
-    //struct Channel* list[]
+    //struct Channel* 数组
     struct Channel** list;  
 };
 

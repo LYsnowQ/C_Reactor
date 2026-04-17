@@ -6,11 +6,11 @@
 struct EventLoop;
 struct Dispatcher
 {
-    //init select/pool/epoll's datablock
+    // 初始化 select/poll/epoll 的数据块
     void* (*init)();    
     int (*add)(struct Channel* channel,struct EventLoop* evLoop);
     int (*remove)(struct Channel* channel,struct EventLoop* evLoop);
     int (*modify)(struct Channel* channel,struct EventLoop* evLoop);
-    int (*dispatch)(struct EventLoop* evLoop,int timeout);//timeout:seconds
+    int (*dispatch)(struct EventLoop* evLoop,int timeout);//超时: 秒
     int (*clear)(struct EventLoop* evLoop);
 };

@@ -13,7 +13,7 @@ static void* epollInit();
 static int epollAdd(struct Channel* channel,struct EventLoop* evLoop);
 static int epollRemove(struct Channel* channel,struct EventLoop* evLoop);
 static int epollModify(struct Channel* channel,struct EventLoop* evLoop);
-static int epollDispatcher(struct EventLoop* evLoop,int timeout);//timeout:seconds
+static int epollDispatcher(struct EventLoop* evLoop,int timeout);//超时: 秒
 static int epollClear(struct EventLoop* evLoop);
 static int epollCtl(struct Channel* channel,struct EventLoop* evLoop,int op);
 
@@ -108,7 +108,7 @@ static int epollModify(struct Channel* channel,struct EventLoop* evLoop)
 }
 
 
-static int epollDispatcher(struct EventLoop* evLoop,int timeout)//timeout:seconds
+static int epollDispatcher(struct EventLoop* evLoop,int timeout)//超时: 秒
 {
     struct EpollData* data = (struct EpollData*)evLoop->dispatcherData;
     int count = epoll_wait(data->epfd, data->events, MAX, timeout*1000);
@@ -118,10 +118,10 @@ static int epollDispatcher(struct EventLoop* evLoop,int timeout)//timeout:second
         int events = data -> events[i].events;
         int fd = data->events[i].data.fd;
         
-        //client has been disconnected
+        // 客户端已断开连接
         if(events & EPOLLERR || events & EPOLLHUP)
         {
-            //epollReMove(Channel,evLoop);
+            //epollRemove(Channel,evLoop);
             continue;
         }
         

@@ -23,11 +23,10 @@ enum FDEvent
 };
 
 
-//init a Channel
+// 初始化一个 Channel
 struct Channel* channelInit(int fd,int events,handleFunc readFunc ,handleFunc writeFunc,handleFunc destoryFunc, void* arg);
 
 void writeEventEnable(struct Channel* channel,bool flag);
 
 bool isWriteEventEnable(struct Channel* channel);
-
 

@@ -111,8 +111,8 @@ char* splitRequestLine(const char* start,const char* end,const char* sub,char** 
 
 char* bufferFindCRLF(struct Buffer* buffer)
 {
-    //strstr()遇到/0结束
-    //memmem-> 大数据块中匹配子数据块
+    // strstr() 遇到 \0 结束
+    // memmem() 在大数据块中匹配子数据块
     char* ptr = memmem(buffer->data+buffer->readPos,bufferReadableSize(buffer),"\r\n",2);
     return ptr;
 }
@@ -131,12 +131,12 @@ bool parseHttpRequestLine(struct HttpRequest* request,struct Buffer* readBuffer)
     
     if(lineSize)
     {
-        //get /xxx/x.txt http/1.1
+        // 获取请求行：/xxx/x.txt HTTP/1.1
         char* point = splitRequestLine(start, end, " ",&request->method);
         point = splitRequestLine(point,end," ",&request->url);
         splitRequestLine(point, end, NULL, &request->version);
 
-        //url
+        // 请求路径
         /* start = space + 1;
         space = memmem(start,end - start," ",1);
         assert(space !=NULL);
@@ -145,7 +145,7 @@ bool parseHttpRequestLine(struct HttpRequest* request,struct Buffer* readBuffer)
         strncpy(request->url, start, methodSize);
         request->method[urlSize] = '\0';
         
-        //http version
+        // 协议版本
         start = space + 1;
         request->version = (char*)malloc(sizeof(end-start+1));
         strncpy(request->version, start,end-start);
@@ -188,7 +188,7 @@ bool parseHttpRequestHead(struct HttpRequest* request,struct Buffer* readBuffer)
         //请求投被解析完，跳过空行
         readBuffer->readPos += 2;
         //修改解析状态
-        //忽略post请求
+        //忽略 POST 请求
         request->curState = ParseReqDone;
     }
     return true;
@@ -264,7 +264,7 @@ void decodeMsg(char* from,char* to)
 
 const char* getFileType(const char* name)
 {
-    // find point from right
+    // 从右侧查找点号
     const char* dot = strrchr(name, '.');
     if(dot == NULL)
         return "text/plain; cherset=utf-8";
@@ -297,7 +297,7 @@ const char* getFileType(const char* name)
 
 
 
-//基于get处理http
+//基于 GET 处理 HTTP
 bool processHttpRequest(struct HttpRequest* request,struct HttpResponse* response)
 {
     if(strcasecmp(request->method,"get") != 0)
@@ -368,7 +368,7 @@ void sendFile(const char* fileName,struct Buffer* sendBuffer ,int cfd)
 #endif
         return;
     }
-#if 1
+#if 0
     while(1) 
     {
         char buff[1024];
@@ -380,7 +380,6 @@ void sendFile(const char* fileName,struct Buffer* sendBuffer ,int cfd)
 #ifndef MSG_SEND_AUTO
             bufferSendData(sendBuffer, cfd);
 #endif
-            usleep(10);//给予缓冲区时间消化
         }
         else if(len == 0)
         {
@@ -418,7 +417,7 @@ void sendDir(const char* dirName,struct Buffer* sendBuffer, int cfd)
     int dirnum = scandir(dirName,&namelist, NULL, alphasort);
     for (int i = 0; i < dirnum; i++)
     {
-        //get fileName
+        // 获取文件名
         
         char* name = namelist[i]->d_name;
         struct stat st;

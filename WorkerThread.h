@@ -8,7 +8,7 @@ struct WorkerThread
     char name[24];
     pthread_mutex_t mutex;
     pthread_cond_t cond;
-    struct EventLoop* evLoop; //Reactor
+    struct EventLoop* evLoop; // 反应堆
 };
 
 int workerThreadInit(struct WorkerThread* thread,int index);

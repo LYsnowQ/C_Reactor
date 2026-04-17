@@ -23,7 +23,7 @@ struct ThreadPool
     //任务队列
     Task* taskQ;
     int queueCapacity;
-    int queueSize;//current size
+    int queueSize;//当前大小
     int queueFront;
     int queueRear; 
 
@@ -34,12 +34,12 @@ struct ThreadPool
     int busyNum;
     int liveNum;
     int exitNum;
-    pthread_mutex_t mutexpool;//lock ThreadPool
-    pthread_mutex_t mutexBusy;//lock BusyNun
+    pthread_mutex_t mutexpool;//锁住线程池
+    pthread_mutex_t mutexBusy;//锁住忙线程数
     pthread_cond_t notFull;
     pthread_cond_t notEmpty;
 
-    int shutdown;//destory:1 not do:0
+    int shutdown;//销毁:1 不销毁:0
 };
 
 ThreadPool* threadPoolCreate(int min,int max,int queueSize)
@@ -87,7 +87,7 @@ ThreadPool* threadPoolCreate(int min,int max,int queueSize)
         return pool;
     }while(0);
     
-    //free sources
+    //释放资源
     if(pool && pool->taskQ)free(pool->taskQ);
     if(pool && pool->threadIDs)free(pool->threadIDs);
     if(pool)free(pool);

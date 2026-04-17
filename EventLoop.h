@@ -34,17 +34,17 @@ struct EventLoop
     struct Dispatcher* dispatcher;
     void* dispatcherData;
     
-    // task Queue
+    // 任务队列
     struct ChannelElement* head;
     struct ChannelElement* tail;
 
-    //map name mutex
+    // 映射与互斥锁
     struct ChannelMap* channelMap;
     pthread_t threadID;
     char threadName[32];
     pthread_mutex_t mutex;
       
-    int socketPair[2]; //store loack communication fd that is initialized by socketpair
+    int socketPair[2]; // 存储由 socketpair 初始化的本地通信 fd
 };
 
 

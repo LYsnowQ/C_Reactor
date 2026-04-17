@@ -18,7 +18,7 @@ static void* selectInit();
 static int selectAdd(struct Channel* channel,struct EventLoop* evLoop);
 static int selectRemove(struct Channel* channel,struct EventLoop* evLoop);
 static int selectModify(struct Channel* channel,struct EventLoop* evLoop);
-static int selectDispatcher(struct EventLoop* evLoop,int timeout);//timeout:seconds
+static int selectDispatcher(struct EventLoop* evLoop,int timeout);//超时: 秒
 static int selectClear(struct EventLoop* evLoop);
 static void setFdSet(struct Channel* channel,struct SelectData* data);
 static void clearFdSet(struct Channel* channel,struct SelectData* data);
@@ -98,14 +98,14 @@ static int selectModify(struct Channel* channel,struct EventLoop* evLoop)
 {
     struct SelectData* data = (struct SelectData*) evLoop->dispatcherData;
     clearFdSet(channel, data);
-    clearFdSet(channel, data);
+    setFdSet(channel, data);
     return 0;
 }
 
 
-static int selectDispatcher(struct EventLoop* evLoop,int timeout)//timeout:seconds
+static int selectDispatcher(struct EventLoop* evLoop,int timeout)//超时: 秒
 {
-    struct SelectData* data = (struct SelectData*)malloc(sizeof(struct SelectData));
+    struct SelectData* data = (struct SelectData*)evLoop->dispatcherData;
     struct timeval val;
     val.tv_sec = timeout;
     val.tv_usec = 0;
@@ -114,7 +114,7 @@ static int selectDispatcher(struct EventLoop* evLoop,int timeout)//timeout:secon
     int count = select(MAX, &rdtmp, &wrtmp,NULL,&val);
     if(count == -1)
     {
-        perror("pool");
+        perror("select");
         exit(0);
     } 
     for(int i = 0; i < MAX ;i++)
@@ -136,7 +136,7 @@ static int selectDispatcher(struct EventLoop* evLoop,int timeout)//timeout:secon
 
 static int selectClear(struct EventLoop* evLoop)
 {
-    struct PollData* data = (struct PollData*)evLoop->dispatcherData;
+    struct SelectData* data = (struct SelectData*)evLoop->dispatcherData;
     free(data);
     return 0;
 }

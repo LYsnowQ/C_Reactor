@@ -36,15 +36,15 @@ void bufferDestory(struct Buffer* buf)
 
 void bufferExtendRoom(struct Buffer* buffer,int size)
 {
-    //there're three bossibilities:
+    // 有三种可能:
     if(bufferWriteableSize(buffer)>= size)
     {
-    //  1.memory is sufficent - doesn't need to be expanded
+    //  1. 内存足够 - 不需要扩容
         return;
     }
     else if(buffer->readPos + bufferWriteableSize(buffer) >= size)
     {
-    //  2.memory needs to be merged - dosen't need to be expanded
+    //  2. 需要先整理内存 - 不需要扩容
         int readabl = bufferReadableSize(buffer);
         memcpy(buffer->data,buffer->data+buffer->readPos,readabl);
         buffer->readPos = 0;
@@ -52,7 +52,7 @@ void bufferExtendRoom(struct Buffer* buffer,int size)
     }
     else 
     {
-    //  3.memory is not sufficent - need to be expanded
+    //  3. 内存不足 - 需要扩容
         void* temp = realloc(buffer->data,buffer->capacity+size);   
         if(temp == NULL)
         {

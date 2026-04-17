@@ -14,14 +14,14 @@ struct EventLoop* eventLoopInit()
     return eventLoopInitEx(NULL);
 }
 
-//Write data
+// 写数据
 void taskWakeup(struct EventLoop* evLoop)
 {
     const char* msg = "wakeUp!";
     write(evLoop->socketPair[0],msg,strlen(msg));
 }
 
-//Read data
+// 读数据
 int readLocalMessage(void* arg)
 {
     struct EventLoop* evLoop = (struct EventLoop*)arg;
@@ -43,7 +43,7 @@ struct EventLoop* eventLoopInitEx(const char* threadName)
     
     strcpy(evLoop->threadName,(!threadName || threadName[0]=='\0')? "MainThread" : threadName);
     
-    evLoop->dispatcher = &EpollDispatcher;
+    evLoop->dispatcher = &PollDispatcher;
     evLoop->dispatcherData = evLoop->dispatcher->init();
 
     evLoop->channelMap = channelMapInit(128);
@@ -128,22 +128,22 @@ int eventLoopAddTask(struct EventLoop* evLoop,struct Channel* channel,int type)
         evLoop->tail = node;   
     }
     pthread_mutex_unlock(&evLoop->mutex);
-    //detail process:
-    //1.for adding linked list node,it can be processed by current thread or main thread:
-    //  1).the event of changing fd,it might be initiated by the current thread,and be processed by current too.
-    //  2).the operation of adding new fd is initiated by main thread.
-    //2.should not let main thread process task queue that it should be processed by child thread!!!
+    // 细节处理:
+    // 1. 对于往链表中新增节点，可能由当前线程处理，也可能由主线程处理。
+    //   1) 修改 fd 事件的操作，可能由当前线程发起，也由当前线程处理。
+    //   2) 新增 fd 的操作由主线程发起。
+    // 2. 不应让主线程去处理本该由子线程处理的任务队列。
 
     if(evLoop->threadID == pthread_self())
     {
-        //Current thread is child thread
+        // 当前线程是子线程
         eventLoopProcessTask(evLoop);
     }
     else 
     {
-        //Current thread is main thread -- tell child thread to process TaskQueue's Task
-        //this time the child thread has two possiblities:
-        //1.The child thread is working. 2.The child thread is blocked(select/poop/epoll)
+        // 当前线程是主线程 -- 通知子线程处理任务队列中的任务
+        // 此时子线程有两种可能:
+        // 1. 子线程正在工作。2. 子线程阻塞在 select/poll/epoll 上
         taskWakeup(evLoop); 
     }
     return 0;
@@ -186,7 +186,7 @@ int eventLoopAdd(struct EventLoop* evLoop,struct Channel* channel)
     struct ChannelMap* channelMap = evLoop->channelMap;
     if(fd >= channelMap->size)
     {
-        //don't have enough space
+        // 空间不够
         if(!makeMapRoom(channelMap, fd , sizeof(struct Channel*)))
         {
             return -1;
